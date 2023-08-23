@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './UserInput.css';
 
 const UserInput = () => {
   const [userText, setUserText] = useState('');
   const [backendResponse, setBackendResponse] = useState('');
+
+  // Load userText from localStorage on component mount
+  useEffect(() => {
+    const storedUserText = localStorage.getItem('userText');
+    if (storedUserText) {
+      setUserText(storedUserText);
+    }
+  }, []);
 
   const handleTextChange = (event) => {
     setUserText(event.target.value);
@@ -13,11 +21,16 @@ const UserInput = () => {
   const sendQueryToBackend = async () => {
     try {
       const response = await axios.post('http://localhost:5000/api/query', { userText });
-      setBackendResponse(response.data.userText); 
+      setBackendResponse(response.data.userText);
     } catch (error) {
       console.error('Error querying backend:', error);
     }
   };
+
+  // Save userText to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('userText', userText);
+  }, [userText]);
 
   return (
     <div className="user-input">
