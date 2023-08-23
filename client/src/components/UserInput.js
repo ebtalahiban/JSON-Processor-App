@@ -5,8 +5,9 @@ import './UserInput.css';
 const UserInput = () => {
   const [userText, setUserText] = useState('');
   const [backendResponse, setBackendResponse] = useState('');
-  const [jsonResponse, setJsonResponse] = useState(null); 
-  const [processedResponse, setProcessedResponse] = useState(null); // New state for processed response
+  const [jsonResponse, setJsonResponse] = useState(null);
+  const [processedResponse, setProcessedResponse] = useState(null);
+  const [errorResponse, setErrorResponse] = useState(null); // Define the error state
 
   useEffect(() => {
     const storedUserText = localStorage.getItem('userText');
@@ -25,15 +26,26 @@ const UserInput = () => {
       const response = await axios.post('http://localhost:5000/api/query', { userText });
       console.log('Response from backend:', response.data);
       setBackendResponse(response.data.userText);
-      setJsonResponse(response.data); // Set the JSON response in state
+      setJsonResponse(response.data);
 
-      // Process the JSON response
-      if (response.data) {
+      if (typeof response.data !== 'object') {
+        setErrorResponse('Non-JSON response');
+        setProcessedResponse(null); // Reset processed response
+      } else {
         const processed = processResponse(response.data);
         setProcessedResponse(processed); // Set the processed response in state
+        setErrorResponse(null); // Clear error if successful
       }
     } catch (error) {
       console.error('Error querying backend:', error);
+
+      if (error.response) {
+        setErrorResponse(`Error: ${error.response.status} - ${error.response.data.error}`);
+      } else {
+        setErrorResponse('An error occurred.');
+      }
+
+      setProcessedResponse(null); // Reset processed response
     }
   };
 
@@ -85,6 +97,14 @@ const UserInput = () => {
           <div>
             <h3>Backend Response:</h3>
             <p>{backendResponse}</p>
+          </div>
+        )}
+      </div>
+      <div className="error-message">
+        {errorResponse && (
+          <div>
+            <h3>Error:</h3>
+            <p>{errorResponse}</p>
           </div>
         )}
       </div>
