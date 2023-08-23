@@ -6,6 +6,7 @@ const UserInput = () => {
   const [userText, setUserText] = useState('');
   const [backendResponse, setBackendResponse] = useState('');
   const [jsonResponse, setJsonResponse] = useState(null); 
+  const [processedResponse, setProcessedResponse] = useState(null); // New state for processed response
 
   useEffect(() => {
     const storedUserText = localStorage.getItem('userText');
@@ -25,12 +26,35 @@ const UserInput = () => {
       console.log('Response from backend:', response.data);
       setBackendResponse(response.data.userText);
       setJsonResponse(response.data); // Set the JSON response in state
+
+      // Process the JSON response
+      if (response.data) {
+        const processed = processResponse(response.data);
+        setProcessedResponse(processed); // Set the processed response in state
+      }
     } catch (error) {
       console.error('Error querying backend:', error);
     }
   };
 
-  // Save userText to localStorage whenever it changes
+  const processResponse = (obj) => {
+    const processLayer = (layer, depth) => {
+      const processedLayer = {};
+      processedLayer['objectCount'] = Object.keys(layer).length;
+      for (const key in layer) {
+        const processedKey = `${key} ${depth}`;
+        if (typeof layer[key] === 'object') {
+          processedLayer[processedKey] = processLayer(layer[key], depth + 1);
+        } else {
+          processedLayer[processedKey] = layer[key];
+        }
+      }
+      return processedLayer;
+    };
+
+    return processLayer(obj, 1);
+  };
+
   useEffect(() => {
     localStorage.setItem('userText', userText);
   }, [userText]);
@@ -61,6 +85,14 @@ const UserInput = () => {
           <div>
             <h3>URL Response:</h3>
             <pre>{JSON.stringify(jsonResponse, null, 2)}</pre>
+          </div>
+        )}
+      </div>
+      <div className="processed-response">
+        {processedResponse && (
+          <div>
+            <h3>Processed Response:</h3>
+            <pre>{JSON.stringify(processedResponse, null, 2)}</pre>
           </div>
         )}
       </div>

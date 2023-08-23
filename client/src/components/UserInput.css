@@ -40,5 +40,21 @@
   .json-response pre {
     white-space: pre-wrap;
   }
+
+  .processed-response {
+    margin-top: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+  }
+  
+  .processed-response h3 {
+    color: #333;
+  }
+  
+  .processed-response p {
+    margin: 10px 0;
+  }
   
   
