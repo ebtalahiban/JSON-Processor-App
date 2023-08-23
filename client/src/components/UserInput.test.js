@@ -6,7 +6,6 @@ import UserInput from './UserInput';
 describe('UserInput', () => {
     it('renders the component', () => {
       render(<UserInput />);
-      // You can add more specific assertions here if needed
     });
   
     it('updates the userText state when typing in the textarea', () => {

@@ -23,7 +23,7 @@ const UserInput = () => {
   const sendQueryToBackend = async () => {
     console.log('Sending query to backend...');
     try {
-      const response = await axios.post('https://dev4901.d3baml1pwli969.amplifyapp.com/api/query', { userText });
+      const response = await axios.post('https://json-processor-app1.onrender.com/api/query', { userText });
       console.log('Response from backend:', response.data);
       setBackendResponse(response.data.userText);
       setJsonResponse(response.data);
