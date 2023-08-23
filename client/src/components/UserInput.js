@@ -5,8 +5,8 @@ import './UserInput.css';
 const UserInput = () => {
   const [userText, setUserText] = useState('');
   const [backendResponse, setBackendResponse] = useState('');
+  const [jsonResponse, setJsonResponse] = useState(null); 
 
-  // Load userText from localStorage on component mount
   useEffect(() => {
     const storedUserText = localStorage.getItem('userText');
     if (storedUserText) {
@@ -19,9 +19,12 @@ const UserInput = () => {
   };
 
   const sendQueryToBackend = async () => {
+    console.log('Sending query to backend...');
     try {
       const response = await axios.post('http://localhost:5000/api/query', { userText });
+      console.log('Response from backend:', response.data);
       setBackendResponse(response.data.userText);
+      setJsonResponse(response.data); // Set the JSON response in state
     } catch (error) {
       console.error('Error querying backend:', error);
     }
@@ -50,6 +53,14 @@ const UserInput = () => {
           <div>
             <h3>Backend Response:</h3>
             <p>{backendResponse}</p>
+          </div>
+        )}
+      </div>
+      <div className="json-response">
+        {jsonResponse && (
+          <div>
+            <h3>URL Response:</h3>
+            <pre>{JSON.stringify(jsonResponse, null, 2)}</pre>
           </div>
         )}
       </div>
