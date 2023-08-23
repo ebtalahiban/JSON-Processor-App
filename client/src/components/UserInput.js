@@ -38,13 +38,21 @@ const UserInput = () => {
   };
 
   const processResponse = (obj) => {
+    const sortStringDescending = (str) => {
+      return str.split('').sort((a, b) => b.localeCompare(a)).join('');
+    };
+
     const processLayer = (layer, depth) => {
       const processedLayer = {};
       processedLayer['objectCount'] = Object.keys(layer).length;
-      for (const key in layer) {
-        const processedKey = `${key} ${depth}`;
+
+      const sortedKeys = Object.keys(layer).sort((a, b) => b.localeCompare(a)); // Sort keys in descending order
+      for (const key of sortedKeys) {
+        const processedKey = `${sortStringDescending(key)} ${depth}`;
         if (typeof layer[key] === 'object') {
           processedLayer[processedKey] = processLayer(layer[key], depth + 1);
+        } else if (typeof layer[key] === 'string') {
+          processedLayer[processedKey] = sortStringDescending(layer[key]);
         } else {
           processedLayer[processedKey] = layer[key];
         }
